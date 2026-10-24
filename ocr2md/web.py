@@ -384,7 +384,7 @@ INDEX_HTML = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OCR → Markdown</title>
+<title>OCR2MD</title>
 <style>
 :root{--bg:#f6f5f1;--fg:#1d2127;--muted:#667085;--card:#fff;--line:#e2dfd7;--accent:#2f5fd0;--accent-fg:#fff;--bad:#b42318;--warn:#8a5a00;--code:#f1efe9}
 @media (prefers-color-scheme:dark){:root{--bg:#15171b;--fg:#e7e9ec;--muted:#98a2ae;--card:#1d2025;--line:#2d3239;--accent:#6f9bff;--accent-fg:#0b1020;--bad:#ff8f84;--warn:#f0c36a;--code:#262a31}}
@@ -393,8 +393,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-app
 header{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;justify-content:space-between}
 header h1{margin:0;font-size:18px;font-weight:650}
 header p{margin:2px 0 0;color:var(--muted);font-size:13px}
-main{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:20px 24px;max-width:1500px;margin:0 auto}
-@media (max-width:900px){main{grid-template-columns:1fr}}
+main{display:grid;grid-template-columns:minmax(260px,300px) minmax(0,1fr);gap:18px;padding:18px 24px;max-width:1440px;margin:0 auto}
+@media (max-width:850px){main{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
 label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
 input[type=text],input[type=password],select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}
@@ -416,107 +416,121 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .toolbar .sp{flex:1}
 .tab.on{background:var(--accent);color:var(--accent-fg);border-color:transparent}
-.panes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:1200px){.panes{grid-template-columns:1fr}}
-textarea{width:100%;height:70vh;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:13px/1.55 ui-monospace,Consolas,monospace;resize:vertical}
-#preview{height:70vh;overflow:auto;padding:4px 16px;border:1px solid var(--line);border-radius:8px}
+.panes{min-width:0}
+textarea{width:100%;height:68vh;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:13px/1.55 ui-monospace,Consolas,monospace;resize:vertical}
+#preview{height:68vh;overflow:auto;padding:12px 20px;border:1px solid var(--line);border-radius:8px}
 #preview h1,#preview h2,#preview h3{line-height:1.3}
 #preview .pg{margin:18px 0 6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
 .empty{color:var(--muted);text-align:center;padding:80px 0}
-dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 22px;width:min(520px,92vw)}
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:20px 22px;width:min(520px,92vw);max-height:88vh;overflow-y:auto}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog h2{margin:0 0 4px;font-size:17px}
 dialog h3{margin:18px 0 0;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 #engInfo,#sStatus{font-size:13px;margin-top:6px;word-break:break-word}
 #engInfo.ok,#sStatus.ok{color:var(--fg)}
 #engInfo.bad,#sStatus.bad{color:var(--bad)}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.dialog-head h2{margin:0}
+.dialog-head button{padding:4px 9px}
+details.advanced{border-top:1px solid var(--line);margin-top:16px;padding-top:12px}
+details.advanced summary{cursor:pointer;color:var(--muted);font-size:13px;user-select:none}
+details.advanced[open] summary{color:var(--fg);margin-bottom:10px}
+details.advanced .inner{padding:0 2px 4px}
+.actions{display:flex;gap:8px;align-items:center;margin-top:16px}
+.actions .primary{flex:1}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>OCR → Markdown</h1>
-    <p>OCR bằng Tesseract, biên tập tự động, chạy hoàn toàn trên máy bạn (trừ bước AI nếu bạn bật).</p>
-  </div>
+  <h1>OCR2MD</h1>
   <button type="button" id="openSettings">⚙ Cài đặt</button>
 </header>
 <main>
   <section class="card">
     <form id="form">
-      <div class="drop" id="drop"><span id="dropText">Kéo thả PDF hoặc ảnh vào đây<br>hoặc bấm để chọn</span></div>
+      <div class="drop" id="drop"><span id="dropText">Kéo thả PDF hoặc ảnh<br>hoặc bấm để chọn</span></div>
       <input type="file" id="file" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.gif" hidden>
-      <label for="lang">Ngôn ngữ OCR</label>
+      <label for="lang">Ngôn ngữ</label>
       <select id="lang"></select>
-      <label for="dpi">Độ phân giải (DPI)</label>
-      <select id="dpi"><option>200</option><option>300</option><option>400</option><option>600</option></select>
-      <div class="hint">Cao hơn = chính xác hơn nhưng chậm hơn.</div>
-      <label for="pages">Chỉ các trang/frame (tuỳ chọn)</label>
-      <input type="text" id="pages" placeholder="ví dụ 1-5,8">
-      <div class="row"><input type="checkbox" id="markers"><label for="markers">Chèn đánh dấu trang</label></div>
-      <div class="row"><input type="checkbox" id="images"><label for="images">Tách hình ra thư mục images/</label></div>
-      <div class="row"><input type="checkbox" id="ai"><label for="ai">Hiệu đính bằng AI</label></div>
-      <div class="hint" id="aiHint"></div>
-      <div class="row">
+      <details class="advanced" id="convertAdvanced">
+        <summary>Tùy chọn nâng cao</summary>
+        <div class="inner">
+          <label for="dpi">Độ phân giải PDF</label>
+          <select id="dpi"><option>200</option><option>300</option><option>400</option><option>600</option></select>
+          <label for="pages">Chỉ xử lý trang/frame</label>
+          <input type="text" id="pages" placeholder="Ví dụ: 1-5,8">
+          <div class="row"><input type="checkbox" id="images"><label for="images">Tách hình</label></div>
+          <div class="row"><input type="checkbox" id="markers"><label for="markers">Đánh dấu trang trong Markdown</label></div>
+          <div class="row"><input type="checkbox" id="ai"><label for="ai">AI hiệu đính</label></div>
+          <div class="hint" id="aiHint"></div>
+          <button type="button" id="openAiSettings">Thiết lập AI</button>
+        </div>
+      </details>
+      <div class="actions">
         <button class="primary" id="go" type="submit">Chuyển đổi</button>
         <button type="button" id="cancel" hidden>Huỷ</button>
       </div>
-      <div class="bar"><i id="bar"></i></div>
-      <div id="status"></div>
+      <div class="bar" id="progress" hidden><i id="bar"></i></div>
+      <div id="status" role="status" aria-live="polite"></div>
       <ul class="notes" id="notes"></ul>
     </form>
   </section>
   <section class="card">
     <div class="toolbar" id="toolbar" hidden>
-      <button class="tab on" id="tabRaw" type="button">Bản biên tập</button>
+      <button class="tab on" id="tabRaw" type="button">Bản OCR</button>
       <button class="tab" id="tabAi" type="button" hidden>Bản AI</button>
       <span class="sp"></span>
+      <button id="edit" type="button">Sửa</button>
       <button id="copy" type="button">Sao chép</button>
       <button class="primary" id="download" type="button">Tải .md</button>
     </div>
     <div class="panes" id="panes" hidden>
-      <textarea id="editor" spellcheck="false"></textarea>
       <div id="preview"></div>
+      <textarea id="editor" spellcheck="false" aria-label="Nội dung Markdown" hidden></textarea>
     </div>
-    <div class="empty" id="empty">Kết quả sẽ hiện ở đây. Bạn có thể sửa trực tiếp trước khi tải về.</div>
+    <div class="empty" id="empty">Markdown sẽ hiện ở đây.</div>
   </section>
 </main>
 <dialog id="dlg">
-  <h2>Cài đặt</h2>
-  <h3>Tesseract</h3>
-  <label for="s_tess">Đường dẫn Tesseract đã cài (tuỳ chọn)</label>
-  <input type="text" id="s_tess" placeholder="Dán đường dẫn tesseract.exe hoặc thư mục cài đặt" autocomplete="off">
-  <div class="hint">Có thể tự chọn bản đã cài bằng ô trên, hoặc tải bản Tesseract cho Windows bên dưới.</div>
-  <label for="s_tess_url">Link tải bộ cài khác (tuỳ chọn)</label>
-  <input type="url" id="s_tess_url" placeholder="Để trống để dùng bản đề xuất" autocomplete="off">
-  <label for="s_tess_sha">SHA-256 của link tự chọn (bắt buộc khi nhập link)</label>
-  <input type="text" id="s_tess_sha" placeholder="64 ký tự hex" autocomplete="off">
-  <button type="button" id="sDownload">Tải Tesseract</button>
-  <div class="bar"><i id="sDownloadBar"></i></div>
-  <div id="sDownloadStatus" class="hint"></div>
-  <label for="s_tdata">Thư mục tessdata (tuỳ chọn, mặc định nằm cạnh tesseract)</label>
-  <input type="text" id="s_tdata" autocomplete="off">
-  <div id="engInfo"></div>
-  <h3>AI hiệu đính</h3>
-  <label for="s_prov">Nhà cung cấp</label>
-  <select id="s_prov"></select>
-  <label for="s_model">Model (để trống = mặc định của nhà cung cấp)</label>
-  <input type="text" id="s_model" autocomplete="off">
-  <div id="urlRow">
-    <label for="s_url">URL API (tương thích OpenAI)</label>
-    <input type="text" id="s_url" placeholder="http://localhost:11434/v1" autocomplete="off">
-  </div>
-  <label for="s_key">API key</label>
-  <input type="password" id="s_key" autocomplete="off">
-  <div class="row"><input type="checkbox" id="s_clear"><label for="s_clear">Xoá key đã lưu</label></div>
-  <div class="hint" id="keyHint"></div>
-  <div class="hint">Key được lưu dạng văn bản thường trong file cấu hình bên dưới. Trên máy dùng chung, hãy dùng biến môi trường thay vì lưu key. Đổi nhà cung cấp hoặc URL mà không nhập key mới sẽ xoá key cũ.</div>
-  <div class="hint" id="cfgPath"></div>
-  <div id="sStatus"></div>
-  <div class="row">
-    <button type="button" class="primary" id="sSave">Lưu</button>
-    <button type="button" id="sTest">Lưu &amp; kiểm tra AI</button>
-    <button type="button" id="sClose">Đóng</button>
-  </div>
+  <div class="dialog-head"><h2>Cài đặt</h2><button type="button" id="sClose" aria-label="Đóng">✕</button></div>
+  <div id="engInfo" role="status"></div>
+  <div class="actions"><button type="button" class="primary" id="sDownload">Tải Tesseract</button></div>
+  <div class="bar" id="sDownloadProgress" hidden><i id="sDownloadBar"></i></div>
+  <div id="sDownloadStatus" class="hint" aria-live="polite"></div>
+  <label for="s_tess">Hoặc dùng Tesseract đã cài</label>
+  <input type="text" id="s_tess" placeholder="Đường dẫn tesseract.exe hoặc thư mục cài đặt" autocomplete="off">
+  <details class="advanced" id="sAdvanced">
+    <summary>Nâng cao</summary>
+    <div class="inner">
+      <h3>Tesseract</h3>
+      <div id="sEnginePath" class="hint"></div>
+      <label for="s_tdata">Thư mục tessdata</label>
+      <input type="text" id="s_tdata" autocomplete="off">
+      <label for="s_tess_url">Link tải bộ cài khác</label>
+      <input type="url" id="s_tess_url" placeholder="HTTPS, để trống để dùng bản đề xuất" autocomplete="off">
+      <label for="s_tess_sha">SHA-256 của link tự chọn</label>
+      <input type="text" id="s_tess_sha" placeholder="64 ký tự hex" autocomplete="off">
+      <h3>AI hiệu đính</h3>
+      <label for="s_prov">Nhà cung cấp</label>
+      <select id="s_prov"></select>
+      <label for="s_model">Model</label>
+      <input type="text" id="s_model" placeholder="Để trống để dùng mặc định" autocomplete="off">
+      <div id="urlRow">
+        <label for="s_url">URL API</label>
+        <input type="text" id="s_url" placeholder="http://localhost:11434/v1" autocomplete="off">
+      </div>
+      <label for="s_key">API key</label>
+      <input type="password" id="s_key" autocomplete="off">
+      <div class="row"><input type="checkbox" id="s_clear"><label for="s_clear">Xoá key đã lưu</label></div>
+      <div class="hint" id="keyHint"></div>
+      <div class="hint">Key được lưu dạng văn bản thường. Đổi nhà cung cấp hoặc URL sẽ xoá key cũ nếu không nhập key mới.</div>
+      <button type="button" id="sTest">Lưu và kiểm tra AI</button>
+      <div class="hint" id="cfgPath"></div>
+    </div>
+  </details>
+  <div id="sStatus" role="status" aria-live="polite"></div>
+  <div class="actions"><button type="button" class="primary" id="sSave">Lưu cài đặt</button></div>
 </dialog>
 <script>
 const $ = s => document.querySelector(s);
@@ -525,7 +539,7 @@ const STAGES = {ocr: "Đang OCR", format: "Đang biên tập", ai: "AI đang hi�
 
 function setStatus(msg, bad) { const el = $("#status"); el.textContent = msg; el.className = bad ? "bad" : ""; }
 function setNotes(list) { $("#notes").innerHTML = ""; list.forEach(t => { const li = document.createElement("li"); li.textContent = "⚠ " + t; $("#notes").append(li); }); }
-function setBusy(b) { $("#go").disabled = b; $("#cancel").hidden = !b; }
+function setBusy(b) { $("#go").disabled = b; $("#cancel").hidden = !b; $("#progress").hidden = !b; }
 
 function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function inline(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); }
@@ -553,6 +567,12 @@ function renderMd(md) {
 
 let renderTimer = null;
 function refreshPreview() { clearTimeout(renderTimer); renderTimer = setTimeout(() => { $("#preview").innerHTML = renderMd($("#editor").value); }, 150); }
+function setEditing(editing) {
+  $("#editor").hidden = !editing;
+  $("#preview").hidden = editing;
+  $("#edit").textContent = editing ? "Xem trước" : "Sửa";
+  if (!editing) refreshPreview();
+}
 
 function showView(view) {
   if (state.view) state.texts[state.view] = $("#editor").value;  // lưu chỗ người dùng đã sửa của tab đang xem
@@ -572,6 +592,7 @@ async function loadResult() {
   state.view = null;  // kết quả mới: đừng lưu nội dung ô soạn thảo cũ đè lên
   $("#tabAi").hidden = j.markdown_ai === null;
   $("#empty").hidden = true; $("#toolbar").hidden = false; $("#panes").hidden = false;
+  setEditing(false);
   showView(j.markdown_ai !== null ? "ai" : "raw");
   setNotes(j.warnings);
   setStatus("Xong: " + j.pages + " trang, ngôn ngữ " + j.lang + (state.images ? ", " + state.images + " hình" : "") + ".");
@@ -598,16 +619,17 @@ async function init() {
   const cfg = await (await fetch("/api/config")).json();
   const prevLang = $("#lang").value || "auto";
   $("#lang").innerHTML = "";
-  cfg.lang_options.forEach(l => $("#lang").add(new Option(l, l)));
+  const langNames = {auto: "Tự động", "vie+eng": "Tiếng Việt + Anh", vie: "Tiếng Việt", eng: "Tiếng Anh"};
+  cfg.lang_options.forEach(l => $("#lang").add(new Option(langNames[l] || l, l)));
   $("#lang").value = cfg.lang_options.includes(prevLang) ? prevLang : "auto";
   $("#dpi").value = $("#dpi").dataset.set ? $("#dpi").value : String(cfg.dpi);
   $("#dpi").dataset.set = "1";
   $("#ai").disabled = !cfg.ai_available;
   if (!cfg.ai_available) $("#ai").checked = false;
-  $("#aiHint").textContent = cfg.ai_available ? cfg.ai_hint : "AI chưa bật: " + cfg.ai_hint;
+  $("#aiHint").textContent = cfg.ai_available ? cfg.ai_hint : "Chưa cấu hình AI.";
   $("#go").disabled = !cfg.engine_ok;
   setNotes(cfg.warnings);
-  if (!cfg.engine_ok) { setStatus(cfg.engine_error || "Chưa có Tesseract. Mở Cài đặt để tải.", true); openSettings(); }
+  if (!cfg.engine_ok) { setStatus("Chưa có Tesseract. Mở Cài đặt để tải.", true); openSettings(); }
   else if ($("#status").classList.contains("bad")) setStatus("");
 }
 
@@ -634,8 +656,12 @@ function fillSettings(s) {
   if (e.ok) {
     const langs = e.langs.filter(l => l !== "osd");
     info.className = "ok";
-    info.textContent = "✔ " + e.version + " · " + e.cmd + " · ngôn ngữ: " + langs.join(", ") + (langs.includes("vie") ? "" : " — thiếu vie.traineddata (chữ Việt sẽ sai dấu)");
-  } else { info.className = "bad"; info.textContent = "✖ " + (e.error || "Chưa tìm thấy Tesseract."); }
+    info.textContent = "✔ Tesseract sẵn sàng · " + langs.join(", ") + (langs.includes("vie") ? "" : " · thiếu tiếng Việt");
+    $("#sEnginePath").textContent = e.version + " · " + e.cmd;
+  } else {
+    info.className = "bad"; info.textContent = "Chưa có Tesseract. Tải xuống hoặc chọn bản đã cài.";
+    $("#sEnginePath").textContent = e.error || "";
+  }
 }
 let downloadTimer = null;
 const DOWNLOAD_STAGE = {installer: "Đang tải Tesseract", extract: "Đang giải nén", eng: "Đang tải tiếng Anh", vie: "Đang tải tiếng Việt", osd: "Đang tải nhận hướng trang", complete: "Hoàn tất"};
@@ -643,6 +669,7 @@ async function refreshDownload() {
   const {j} = await api("/api/tesseract/download");
   const label = DOWNLOAD_STAGE[j.stage] || "";
   const pct = j.total ? Math.round(100 * j.done / j.total) : 0;
+  $("#sDownloadProgress").hidden = j.status !== "running";
   $("#sDownloadBar").style.width = pct + "%";
   $("#sDownloadStatus").textContent = j.status === "error" ? j.error : (j.status === "running" ? label + (j.total ? " " + pct + "%" : "…") : (j.status === "done" ? "Tesseract đã sẵn sàng." : ""));
   $("#sDownload").disabled = j.status === "running";
@@ -679,6 +706,7 @@ $("#sDownload").onclick = async () => {
   if (!downloadTimer) downloadTimer = setInterval(refreshDownload, 350);
 };
 $("#openSettings").onclick = openSettings;
+$("#openAiSettings").onclick = async () => { await openSettings(); $("#sAdvanced").open = true; };
 $("#sClose").onclick = () => $("#dlg").close();
 $("#sSave").onclick = saveSettings;
 $("#sTest").onclick = async () => {
@@ -716,6 +744,7 @@ $("#form").addEventListener("submit", async e => {
 $("#cancel").onclick = () => fetch("/api/jobs/" + state.jobId + "/cancel", {method: "POST"});
 $("#tabRaw").onclick = () => showView("raw");
 $("#tabAi").onclick = () => showView("ai");
+$("#edit").onclick = () => setEditing($("#editor").hidden);
 $("#editor").addEventListener("input", refreshPreview);
 $("#copy").onclick = async () => { await navigator.clipboard.writeText($("#editor").value); setStatus("Đã sao chép."); };
 function save(blob, filename) {
