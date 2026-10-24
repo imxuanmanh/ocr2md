@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ocr2md"
+version = "0.2.0"
+description = "OCR PDF và ảnh thành Markdown (CLI + web UI)"
+requires-python = ">=3.10"
+dependencies = ["pymupdf>=1.24", "flask>=3.0", "numpy>=1.26", "pillow>=10.0"]
+
+[project.optional-dependencies]
+# DeepSeek / OpenAI / Ollama / custom không cần gói nào thêm; chỉ Claude cần:
+anthropic = ["anthropic>=0.40"]
+
+[project.scripts]
+ocr2md = "ocr2md.cli:main"
+
+[tool.setuptools]
+packages = ["ocr2md"]
+
+[tool.setuptools.package-data]
+ocr2md = [
+  "vendor/7zip/*",
+]

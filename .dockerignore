@@ -1,0 +1,10 @@
+.venv
+.git
+.vscode
+**/__pycache__
+*.pyc
+*.egg-info
+work
+ocr2md/vendor
+tests
+.env

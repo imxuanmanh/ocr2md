@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ocr2md: web UI",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ocr2md",
+      "args": ["serve", "--no-browser"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "ocr2md: convert file PDF/ảnh đang mở",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ocr2md",
+      "args": ["convert", "${file}", "--lang", "vie+eng", "--extract-images"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "ocr2md: doctor",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ocr2md",
+      "args": ["doctor"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

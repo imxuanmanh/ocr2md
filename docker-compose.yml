@@ -1,0 +1,19 @@
+services:
+  ocr2md:
+    build: .
+    image: ocr2md:local
+    ports:
+      # Chỉ publish về chính máy bạn. Đừng đổi thành "8765:8765" (mở ra toàn mạng): web UI không có đăng nhập.
+      - "127.0.0.1:8765:8765"
+    environment:
+      # Đọc từ shell hoặc file .env cạnh file này; để trống nếu nhập key trong ⚙ Cài đặt.
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - ocr2md-data:/data   # giữ ⚙ Cài đặt qua các lần chạy lại
+      - ./work:/work        # thư mục cho CLI: đặt PDF hoặc ảnh vào ./work, kết quả ra cùng chỗ
+    restart: unless-stopped
+
+volumes:
+  ocr2md-data:
