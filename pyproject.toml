@@ -1,12 +1,31 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ocr2md"
 version = "0.2.1"
 description = "OCR PDF và ảnh thành Markdown (CLI + web UI)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Xuân Mạnh" }]
 requires-python = ">=3.10"
+keywords = ["ocr", "pdf", "markdown", "tesseract", "vietnamese"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Environment :: Web Environment",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+  "Topic :: Text Processing :: Markup :: Markdown",
+]
 dependencies = ["pymupdf>=1.24", "flask>=3.0", "numpy>=1.26", "pillow>=10.0"]
 
 [project.optional-dependencies]
@@ -15,6 +34,11 @@ anthropic = ["anthropic>=0.40"]
 
 [project.scripts]
 ocr2md = "ocr2md.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/imxuanmanh/ocr2md"
+Repository = "https://github.com/imxuanmanh/ocr2md"
+Issues = "https://github.com/imxuanmanh/ocr2md/issues"
 
 [tool.setuptools]
 packages = ["ocr2md"]

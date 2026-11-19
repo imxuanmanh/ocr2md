@@ -12,7 +12,7 @@ PDF ──PyMuPDF render──▶ ảnh ──▶ Tesseract (TSV)──▶ dòng
 
 ## Bản Windows mở trực tiếp
 
-Tải `OCR2MD.exe` rồi mở file. Cửa sổ dòng lệnh sẽ chạy web UI và trình duyệt tự mở tại `http://127.0.0.1:8765`; đóng cửa sổ dòng lệnh để dừng ứng dụng. File EXE khoảng 45 MB và không chứa Tesseract. Lần đầu cần OCR, vào **⚙ Cài đặt → Tải Tesseract**; bộ OCR tải riêng và lưu trong dữ liệu người dùng. Có thể dùng đường dẫn bản đã cài thay cho tải tự động.
+Tải `OCR2MD.exe` từ [GitHub Releases](https://github.com/imxuanmanh/ocr2md/releases/latest) rồi mở file. Cửa sổ dòng lệnh sẽ chạy web UI và trình duyệt tự mở tại `http://127.0.0.1:8765`; đóng cửa sổ dòng lệnh để dừng ứng dụng. File EXE khoảng 45 MB và không chứa Tesseract. Lần đầu cần OCR, vào **⚙ Cài đặt → Tải Tesseract**; bộ OCR tải riêng và lưu trong dữ liệu người dùng. Có thể dùng đường dẫn bản đã cài thay cho tải tự động.
 
 Để tự tạo EXE từ mã nguồn trên Windows:
 
